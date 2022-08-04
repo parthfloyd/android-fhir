@@ -1548,7 +1548,7 @@ class AddPatientViewModel(application: Application, private val state: SavedStat
     } ]
   } ]
 }"""
-      val structureMap = FhirContext.forR5().newJsonParser().parseResource(structureMapString) as StructureMap
+      val structureMap = FhirContext.forR4().newJsonParser().parseResource(structureMapString) as StructureMap
       val entry = ResourceMapper.extract(
         questionnaireResource,
         questionnaireResponse,
