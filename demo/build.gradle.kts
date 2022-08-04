@@ -37,7 +37,7 @@ android {
     targetCompatibility = JavaVersion.VERSION_1_8
   }
   packagingOptions {
-    resources.excludes.addAll(listOf("META-INF/ASL-2.0.txt", "META-INF/LGPL-3.0.txt"))
+    resources.excludes.addAll(listOf("META-INF/ASL-2.0.txt", "META-INF/LGPL-3.0.txt", "META-INF/sun-jaxb.episode", "/license.html","/readme.html"))
   }
   // See https://developer.android.com/studio/write/java8-support
   kotlinOptions { jvmTarget = JavaVersion.VERSION_1_8.toString() }

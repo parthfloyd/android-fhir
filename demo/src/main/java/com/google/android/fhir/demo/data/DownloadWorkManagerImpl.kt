@@ -29,7 +29,7 @@ import org.hl7.fhir.r4.model.ResourceType
 
 class DownloadWorkManagerImpl : DownloadWorkManager {
   private val resourceTypeList = ResourceType.values().map { it.name }
-  private val urls = LinkedList(listOf("Patient?address-city=NAIROBI"))
+  private val urls = LinkedList(listOf("Patient?address-city=NAIROBI","ValueSet"))
 
   override suspend fun getNextRequestUrl(context: SyncDownloadContext): String? {
     var url = urls.poll() ?: return null
@@ -90,23 +90,6 @@ class DownloadWorkManagerImpl : DownloadWorkManager {
  */
 private fun affixLastUpdatedTimestamp(url: String, lastUpdated: String): String {
   var downloadUrl = url
-
-  // Affix lastUpdate to a $everything query using _since as per:
-  // https://hl7.org/fhir/operation-patient-everything.html
-  if (downloadUrl.contains("\$everything")) {
-    downloadUrl = "$downloadUrl?_since=$lastUpdated"
-  }
-
-  // Affix lastUpdate to non-$everything queries as per:
-  // https://hl7.org/fhir/operation-patient-everything.html
-  if (!downloadUrl.contains("\$everything")) {
-    downloadUrl = "$downloadUrl&_lastUpdated=gt$lastUpdated"
-  }
-
-  // Do not modify any URL set by a server that specifies the token of the page to return.
-  if (downloadUrl.contains("&page_token")) {
-    downloadUrl = url
-  }
 
   return downloadUrl
 }
