@@ -18,18 +18,70 @@ package com.google.android.fhir.demo
 
 import android.app.Application
 import android.content.Context
+import ca.uhn.fhir.context.FhirContext
 import com.google.android.fhir.DatabaseErrorStrategy.RECREATE_AT_OPEN
 import com.google.android.fhir.FhirEngine
 import com.google.android.fhir.FhirEngineConfiguration
 import com.google.android.fhir.FhirEngineProvider
 import com.google.android.fhir.ServerConfiguration
+import com.google.android.fhir.datacapture.DataCaptureConfig
+import com.google.android.fhir.datacapture.ExternalAnswerValueSetResolver
 import com.google.android.fhir.demo.data.FhirPeriodicSyncWorker
+import com.google.android.fhir.search.StringFilterModifier
+import com.google.android.fhir.search.search
 import com.google.android.fhir.sync.Sync
+import com.google.android.fhir.workflow.FhirOperator
+import kotlinx.coroutines.runBlocking
+import org.hl7.fhir.r4.model.*
 import timber.log.Timber
 
-class FhirApplication : Application() {
+class FhirApplication : Application(), DataCaptureConfig.Provider {
   // Only initiate the FhirEngine when used for the first time, not when the app is created.
   private val fhirEngine: FhirEngine by lazy { constructFhirEngine() }
+
+    private val dataCaptureConfiguration by lazy {
+        DataCaptureConfig(
+            valueSetResolverExternal =
+            object : ExternalAnswerValueSetResolver {
+                override suspend fun resolve(uri: String): List<Coding> {
+                    return lookupCodesFromDb(uri)
+                }
+            }
+        )
+    }
+
+    private suspend fun lookupCodesFromDb(uri: String): List<Coding> {
+        val valueSets: List<ValueSet> = FhirEngineProvider.getInstance(this).search {
+            filter(
+                ValueSet.URL,
+                {
+                    StringFilterModifier.MATCHES_EXACTLY
+                    value = uri
+                }
+            )
+        }
+
+        if(valueSets.isEmpty()) {
+            return listOf()
+        } else {
+            val valueSet = valueSets.get(0)
+            val codingList = mutableListOf<Coding>()
+            valueSet.compose.include.forEach {
+                    includeObj ->
+                run {
+                    includeObj.concept.forEach { conceptObj ->
+                        codingList.add(Coding(includeObj.system, conceptObj.code, conceptObj.display))
+                    }
+
+                }
+            }
+            return codingList
+        }
+    }
+
+    override fun getDataCaptureConfig(): DataCaptureConfig {
+        return dataCaptureConfiguration
+    }
 
   override fun onCreate() {
     super.onCreate()
@@ -40,7 +92,7 @@ class FhirApplication : Application() {
       FhirEngineConfiguration(
         enableEncryptionIfSupported = true,
         RECREATE_AT_OPEN,
-        ServerConfiguration("https://hapi.fhir.org/baseR4/")
+        ServerConfiguration("https://fhir.dk.swisstph-mis.ch/matchbox/fhir/")
       )
     )
     Sync.oneTimeSync<FhirPeriodicSyncWorker>(this)

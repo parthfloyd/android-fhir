@@ -58,7 +58,7 @@ class MainActivityViewModel(application: Application, private val state: SavedSt
       job.poll(
           PeriodicSyncConfiguration(
             syncConstraints = Constraints.Builder().build(),
-            repeat = RepeatInterval(interval = 15, timeUnit = TimeUnit.MINUTES)
+            repeat = RepeatInterval(interval = 15, timeUnit = TimeUnit.HOURS)
           ),
           FhirPeriodicSyncWorker::class.java
         )

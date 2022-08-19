@@ -28,6 +28,8 @@
         android:roundIcon="@mipmap/ic_fire_engine_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:hardwareAccelerated="false"
+        android:largeHeap="true"
     >
         <activity
             android:name="com.google.android.fhir.demo.MainActivity"
