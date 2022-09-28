@@ -16,7 +16,6 @@
 
 package com.google.android.fhir.datacapture.views
 
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.google.android.fhir.datacapture.R
@@ -75,14 +74,8 @@ class QuestionnaireItemDateTimePickerViewHolderFactoryTest {
       )
     )
 
-    assertThat(
-        viewHolder.itemView.findViewById<TextView>(R.id.date_input_edit_text).text.toString()
-      )
-      .isEqualTo("")
-    assertThat(
-        viewHolder.itemView.findViewById<TextView>(R.id.time_input_edit_text).text.toString()
-      )
-      .isEqualTo("")
+    assertThat(viewHolder.dateInputView.text.toString()).isEqualTo("")
+    assertThat(viewHolder.timeInputView.text.toString()).isEqualTo("")
   }
 
   @Test
@@ -100,14 +93,108 @@ class QuestionnaireItemDateTimePickerViewHolderFactoryTest {
       )
     )
 
-    assertThat(
-        viewHolder.itemView.findViewById<TextView>(R.id.date_input_edit_text).text.toString()
+    assertThat(viewHolder.dateInputView.text.toString()).isEqualTo("2/5/20")
+    assertThat(viewHolder.timeInputView.text.toString()).isEqualTo("1:30 AM")
+  }
+
+  @Test
+  fun `parse date text input in US locale`() {
+    val itemViewItem =
+      QuestionnaireItemViewItem(
+        Questionnaire.QuestionnaireItemComponent().apply { text = "Question?" },
+        QuestionnaireResponse.QuestionnaireResponseItemComponent()
+          .addAnswer(
+            QuestionnaireResponse.QuestionnaireResponseItemAnswerComponent()
+              .setValue(DateTimeType(Date(2020 - 1900, 1, 5, 1, 30, 0)))
+          ),
+        validationResult = NotValidated,
+        answersChangedCallback = { _, _, _ -> },
       )
-      .isEqualTo("2/5/20")
-    assertThat(
-        viewHolder.itemView.findViewById<TextView>(R.id.time_input_edit_text).text.toString()
+    viewHolder.bind(itemViewItem)
+
+    viewHolder.dateInputView.text = "11/19/2020"
+
+    val answer = itemViewItem.answers.singleOrNull()?.value as DateTimeType
+    assertThat(answer.day).isEqualTo(19)
+    assertThat(answer.month).isEqualTo(10)
+    assertThat(answer.year).isEqualTo(2020)
+  }
+
+  @Test
+  fun `parse date text input in Japan locale`() {
+    Locale.setDefault(Locale.JAPAN)
+    val itemViewItem =
+      QuestionnaireItemViewItem(
+        Questionnaire.QuestionnaireItemComponent().apply { text = "Question?" },
+        QuestionnaireResponse.QuestionnaireResponseItemComponent()
+          .addAnswer(
+            QuestionnaireResponse.QuestionnaireResponseItemAnswerComponent()
+              .setValue(DateTimeType(Date(2020 - 1900, 1, 5, 1, 30, 0)))
+          ),
+        validationResult = NotValidated,
+        answersChangedCallback = { _, _, _ -> },
       )
-      .isEqualTo("1:30 AM")
+    viewHolder.bind(itemViewItem)
+
+    viewHolder.dateInputView.text = "2020/11/19"
+
+    val answer = itemViewItem.answers.singleOrNull()?.value as DateTimeType
+    assertThat(answer.day).isEqualTo(19)
+    assertThat(answer.month).isEqualTo(10)
+    assertThat(answer.year).isEqualTo(2020)
+  }
+
+  @Test
+  fun `if date input is invalid then clear the answer`() {
+    val itemViewItem =
+      QuestionnaireItemViewItem(
+        Questionnaire.QuestionnaireItemComponent().apply { text = "Question?" },
+        QuestionnaireResponse.QuestionnaireResponseItemComponent()
+          .addAnswer(
+            QuestionnaireResponse.QuestionnaireResponseItemAnswerComponent()
+              .setValue(DateTimeType(Date(2020 - 1900, 1, 5, 1, 30, 0)))
+          ),
+        validationResult = NotValidated,
+        answersChangedCallback = { _, _, _ -> },
+      )
+    viewHolder.bind(itemViewItem)
+    viewHolder.dateInputView.text = "2020/11/"
+
+    assertThat(itemViewItem.answers.singleOrNull()).isNull()
+  }
+
+  @Test
+  fun `if date input is invalid then do not enable time text input layout`() {
+    val itemViewItem =
+      QuestionnaireItemViewItem(
+        Questionnaire.QuestionnaireItemComponent().apply { text = "Question?" },
+        QuestionnaireResponse.QuestionnaireResponseItemComponent(),
+        validationResult = NotValidated,
+        answersChangedCallback = { _, _, _ -> },
+      )
+
+    viewHolder.bind(itemViewItem)
+    viewHolder.dateInputView.text = "11/19/"
+
+    assertThat(viewHolder.itemView.findViewById<TextInputLayout>(R.id.time_input_layout).isEnabled)
+      .isFalse()
+  }
+
+  @Test
+  fun `if date input is valid then enable time text input layout`() {
+    val itemViewItem =
+      QuestionnaireItemViewItem(
+        Questionnaire.QuestionnaireItemComponent().apply { text = "Question?" },
+        QuestionnaireResponse.QuestionnaireResponseItemComponent(),
+        validationResult = NotValidated,
+        answersChangedCallback = { _, _, _ -> },
+      )
+
+    viewHolder.bind(itemViewItem)
+    viewHolder.dateInputView.text = "11/19/2020"
+
+    assertThat(viewHolder.itemView.findViewById<TextInputLayout>(R.id.time_input_layout).isEnabled)
+      .isTrue()
   }
 
   @Test
@@ -167,9 +254,65 @@ class QuestionnaireItemDateTimePickerViewHolderFactoryTest {
       )
     )
 
-    assertThat(viewHolder.itemView.findViewById<EditText>(R.id.date_input_edit_text).isEnabled)
-      .isFalse()
-    assertThat(viewHolder.itemView.findViewById<EditText>(R.id.time_input_edit_text).isEnabled)
-      .isFalse()
+    assertThat(viewHolder.dateInputView.isEnabled).isFalse()
+    assertThat(viewHolder.timeInputView.isEnabled).isFalse()
   }
+
+  @Test
+  fun `bind multiple times with separate QuestionnaireItemViewItem should show proper date and time`() {
+
+    viewHolder.bind(
+      QuestionnaireItemViewItem(
+        Questionnaire.QuestionnaireItemComponent().apply { text = "Question?" },
+        QuestionnaireResponse.QuestionnaireResponseItemComponent()
+          .addAnswer(
+            QuestionnaireResponse.QuestionnaireResponseItemAnswerComponent()
+              .setValue(DateTimeType(Date(2020 - 1900, 1, 5, 1, 30, 0)))
+          ),
+        validationResult = NotValidated,
+        answersChangedCallback = { _, _, _ -> },
+      )
+    )
+
+    assertThat(viewHolder.dateInputView.text.toString()).isEqualTo("2/5/20")
+    assertThat(viewHolder.timeInputView.text.toString()).isEqualTo("1:30 AM")
+
+    viewHolder.bind(
+      QuestionnaireItemViewItem(
+        Questionnaire.QuestionnaireItemComponent().apply { text = "Question?" },
+        QuestionnaireResponse.QuestionnaireResponseItemComponent()
+          .addAnswer(
+            QuestionnaireResponse.QuestionnaireResponseItemAnswerComponent()
+              .setValue(DateTimeType(Date(2021 - 1900, 1, 5, 2, 30, 0)))
+          ),
+        validationResult = NotValidated,
+        answersChangedCallback = { _, _, _ -> },
+      )
+    )
+
+    assertThat(viewHolder.dateInputView.text.toString()).isEqualTo("2/5/21")
+    assertThat(viewHolder.timeInputView.text.toString()).isEqualTo("2:30 AM")
+
+    viewHolder.bind(
+      QuestionnaireItemViewItem(
+        Questionnaire.QuestionnaireItemComponent().apply { text = "Question?" },
+        QuestionnaireResponse.QuestionnaireResponseItemComponent(),
+        validationResult = NotValidated,
+        answersChangedCallback = { _, _, _ -> },
+      )
+    )
+
+    assertThat(viewHolder.dateInputView.text.toString()).isEmpty()
+    assertThat(viewHolder.timeInputView.text.toString()).isEmpty()
+  }
+
+  private val QuestionnaireItemViewHolder.dateInputView: TextView
+    get() {
+      return itemView.findViewById(R.id.date_input_edit_text)
+    }
+
+  private val QuestionnaireItemViewHolder.timeInputView: TextView
+    get() {
+      return itemView.findViewById(R.id.time_input_edit_text)
+    }
 }
