@@ -30,8 +30,6 @@ import com.google.android.fhir.demo.data.FhirPeriodicSyncWorker
 import com.google.android.fhir.search.StringFilterModifier
 import com.google.android.fhir.search.search
 import com.google.android.fhir.sync.Sync
-import com.google.android.fhir.workflow.FhirOperator
-import kotlinx.coroutines.runBlocking
 import org.hl7.fhir.r4.model.*
 import com.google.android.fhir.sync.remote.HttpLogger
 import timber.log.Timber
