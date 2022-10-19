@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import com.google.android.fhir.sync.Sync
 import com.google.android.fhir.workflow.FhirOperator
 import kotlinx.coroutines.runBlocking
 import org.hl7.fhir.r4.model.*
+import com.google.android.fhir.sync.remote.HttpLogger
 import timber.log.Timber
 
 class FhirApplication : Application(), DataCaptureConfig.Provider {
@@ -92,7 +93,15 @@ class FhirApplication : Application(), DataCaptureConfig.Provider {
       FhirEngineConfiguration(
         enableEncryptionIfSupported = true,
         RECREATE_AT_OPEN,
-        ServerConfiguration("https://fhir.dk.swisstph-mis.ch/matchbox/fhir/")
+        ServerConfiguration(
+          "https://fhir.dk.swisstph-mis.ch/matchbox/fhir/",
+          httpLogger =
+            HttpLogger(
+              HttpLogger.Configuration(
+                if (BuildConfig.DEBUG) HttpLogger.Level.BODY else HttpLogger.Level.BASIC
+              )
+            ) { Timber.tag("App-HttpLog").d(it) }
+        )
       )
     )
     Sync.oneTimeSync<FhirPeriodicSyncWorker>(this)
