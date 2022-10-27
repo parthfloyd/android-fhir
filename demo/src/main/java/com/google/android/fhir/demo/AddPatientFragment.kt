@@ -76,7 +76,9 @@ class AddPatientFragment : Fragment(R.layout.add_patient_fragment) {
 
   private fun updateArguments() {
     requireArguments()
-      .putString(QUESTIONNAIRE_FILE_PATH_KEY, "new-patient-registration-paginated.json")
+      .putString(QUESTIONNAIRE_FILE_PATH_KEY, "questionnaire-emcareb.registration.e.json")
+    requireArguments()
+      .putString(STRUCTUREMAP_FILE_PATH_KEY, "structuremap-emcareb.registration.e.json")
   }
 
   private fun addQuestionnaireFragment() {
@@ -113,5 +115,6 @@ class AddPatientFragment : Fragment(R.layout.add_patient_fragment) {
   companion object {
     const val QUESTIONNAIRE_FILE_PATH_KEY = "questionnaire-file-path-key"
     const val QUESTIONNAIRE_FRAGMENT_TAG = "questionnaire-fragment-tag"
+    const val STRUCTUREMAP_FILE_PATH_KEY=  "structuremap-file-path-key"
   }
 }
