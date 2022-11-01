@@ -200,7 +200,7 @@ object Dependencies {
     const val caffeine = "2.9.1"
     const val fhirUcum = "1.0.3"
     const val guava = "28.2-android"
-    const val hapiFhir = "6.0.1"
+    const val hapiFhir = "6.1.3"
     const val http = "4.9.1"
     const val jackson = "2.12.2"
     const val jsonToolsPatch = "1.13"
