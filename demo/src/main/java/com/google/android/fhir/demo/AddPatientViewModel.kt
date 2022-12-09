@@ -46,8 +46,8 @@ class AddPatientViewModel(application: Application, private val state: SavedStat
 
   private val questionnaireResource: Questionnaire
     get() =
-      FhirContext.forCached(FhirVersionEnum.R4).newJsonParser().parseResource(questionnaire) as
-        Questionnaire
+      FhirContext.forCached(FhirVersionEnum.R4).newJsonParser().parseResource(questionnaire)
+        as Questionnaire
   private var fhirEngine: FhirEngine = FhirApplication.fhirEngine(application.applicationContext)
   private var questionnaireJson: String? = null
   private var structuremapJson: String? = null

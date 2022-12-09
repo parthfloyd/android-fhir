@@ -29,6 +29,7 @@ import com.google.android.fhir.datacapture.ExternalAnswerValueSetResolver
 import com.google.android.fhir.demo.data.FhirPeriodicSyncWorker
 import com.google.android.fhir.search.StringFilterModifier
 import com.google.android.fhir.search.search
+import com.google.android.fhir.demo.data.FhirSyncWorker
 import com.google.android.fhir.sync.Sync
 import org.hl7.fhir.r4.model.*
 import com.google.android.fhir.sync.remote.HttpLogger
@@ -102,7 +103,7 @@ class FhirApplication : Application(), DataCaptureConfig.Provider {
         )
       )
     )
-    Sync.oneTimeSync<FhirPeriodicSyncWorker>(this)
+    Sync.oneTimeSync<FhirSyncWorker>(this)
   }
 
   private fun constructFhirEngine(): FhirEngine {
