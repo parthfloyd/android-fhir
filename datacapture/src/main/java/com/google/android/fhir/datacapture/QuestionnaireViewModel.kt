@@ -215,7 +215,9 @@ internal class QuestionnaireViewModel(application: Application, state: SavedStat
 
   /** Flag to determine if the questionnaire should be read-only. */
   private val isReadOnly = state[QuestionnaireFragment.EXTRA_READ_ONLY] ?: false
-
+  fun getIsReadOnly(): Boolean {
+    return isReadOnly
+  }
   /** Flag to support fragment for review-feature */
   private val shouldEnableReviewPage =
     state[QuestionnaireFragment.EXTRA_ENABLE_REVIEW_PAGE] ?: false
