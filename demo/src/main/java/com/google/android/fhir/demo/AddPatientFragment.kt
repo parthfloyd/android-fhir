@@ -75,29 +75,15 @@ class AddPatientFragment : Fragment(R.layout.add_patient_fragment) {
   }
 
   private fun updateArguments() {
-    var resources =  listOf("emcareb.registration.e",//0
-                            "emcarea.registration.p",//1
-                            "emcare.b7.lti-dangersigns",//2
-                            "emcare.b18-21.symptoms.2m.m",//3
-                            "emcare.b10-14.symptoms.2m.p",//4
-                            "emcare.b18-21.signs.2m.m",//5
-                            "emcare.b10-16.signs.2m.p",//6
-                            "emcare.b23.classification")//7
-
-    var res = resources[7]
-    var questionnairename = String.format("questionnaire-%s.json", res)
-    var structuremapname = String.format("structuremap-%s.json", res)
     requireArguments()
-      .putString(QUESTIONNAIRE_FILE_PATH_KEY, questionnairename)
-    requireArguments()
-      .putString(STRUCTUREMAP_FILE_PATH_KEY, structuremapname)
+      .putString(QUESTIONNAIRE_FILE_PATH_KEY, "new-patient-registration-paginated.json")
   }
 
   private fun addQuestionnaireFragment() {
     val fragment = QuestionnaireFragment()
     fragment.arguments =
-      bundleOf(QuestionnaireFragment.EXTRA_QUESTIONNAIRE_JSON_STRING to viewModel.questionnaire,
-                QuestionnaireFragment.EXTRA_QUESTIONNAIRE_RESPONSE_JSON_STRING to viewModel.questionnaireResponse)
+      bundleOf(QuestionnaireFragment.EXTRA_QUESTIONNAIRE_JSON_STRING to viewModel.questionnaire
+      , QuestionnaireFragment.EXTRA_ENABLE_REVIEW_PAGE to true)
     childFragmentManager.commit {
       add(R.id.add_patient_container, fragment, QUESTIONNAIRE_FRAGMENT_TAG)
     }
@@ -125,9 +111,7 @@ class AddPatientFragment : Fragment(R.layout.add_patient_fragment) {
   }
 
   companion object {
-
     const val QUESTIONNAIRE_FILE_PATH_KEY = "questionnaire-file-path-key"
     const val QUESTIONNAIRE_FRAGMENT_TAG = "questionnaire-fragment-tag"
-    const val STRUCTUREMAP_FILE_PATH_KEY=  "structuremap-file-path-key"
   }
 }
