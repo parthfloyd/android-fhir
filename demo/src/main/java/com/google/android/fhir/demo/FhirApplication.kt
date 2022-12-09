@@ -26,7 +26,6 @@ import com.google.android.fhir.FhirEngineProvider
 import com.google.android.fhir.ServerConfiguration
 import com.google.android.fhir.datacapture.DataCaptureConfig
 import com.google.android.fhir.datacapture.ExternalAnswerValueSetResolver
-import com.google.android.fhir.demo.data.FhirPeriodicSyncWorker
 import com.google.android.fhir.search.StringFilterModifier
 import com.google.android.fhir.search.search
 import com.google.android.fhir.demo.data.FhirSyncWorker
