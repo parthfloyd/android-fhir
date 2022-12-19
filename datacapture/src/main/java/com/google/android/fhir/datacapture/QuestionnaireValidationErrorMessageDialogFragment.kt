@@ -24,6 +24,7 @@ import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.res.use
+import androidx.core.text.toSpanned
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -51,10 +52,6 @@ internal class QuestionnaireValidationErrorMessageDialogFragment(
     return MaterialAlertDialogBuilder(requireContext())
       .setView(onCreateCustomView())
       .setPositiveButton(R.string.questionnaire_validation_error_fix_button_text) { dialog, _ ->
-        dialog?.dismiss()
-      }
-      .setNegativeButton(R.string.questionnaire_validation_error_submit_button_text) { dialog, _ ->
-        setFragmentResult(RESULT_CALLBACK, Bundle.EMPTY)
         dialog?.dismiss()
       }
       .create()
@@ -113,7 +110,7 @@ internal class QuestionnaireValidationErrorViewModel : ViewModel() {
       ?.item
       ?.flattened()
       ?.filter { invalidFields.contains(it.linkId) }
-      ?.map { if (it.text.isNullOrEmpty()) it.localizedFlyoverSpanned.toString() else it.text }
+      ?.map { if (it.text.isNullOrEmpty()) it.localizedFlyoverSpanned.toString() else it.text.toSpanned().toString() }
       ?: emptyList()
   }
 }
