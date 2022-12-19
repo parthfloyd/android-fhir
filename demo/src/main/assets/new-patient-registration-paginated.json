@@ -1,17 +1,14 @@
 {
   "resourceType": "Questionnaire",
-  "extension": [
-    {
-      "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-itemExtractionContext",
-      "valueExpression": {
-        "language": "application/x-fhir-query",
-        "expression": "Immunization",
-        "name": "vaccination"
-      }
-    }
-  ],
   "item": [
     {
+      "linkId": "EmCare.C10.IT.DE01",
+      "text": "Very Severe Disease<br>➢ <b>Give one dose of</b> rectal <u>diazepam <b>if</b></u> convulsing now, repeat after 10 minutes if convulsion has not stopped\n➢Give any pre-referral treatment immediately\n➢Treat to prevent low blood sugar\n➢Keep the child warm\n➢Refer URGENTLY to hospital**.\n\n**Exception: If lethargy is the only sign and child is dehydrated, rehydrated and assess.",
+      "type": "display",
+      "required": false,
+      "repeats": false
+    }
+    ,{
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
@@ -19,37 +16,23 @@
             "coding": [
               {
                 "system": "http://hl7.org/fhir/questionnaire-item-control",
-                "code": "radio-button",
-                "display": "Radio Button"
+                "code": "check-box",
+                "display": "Check-box"
               }
-            ]
+            ],
+            "text": "Check-box"
           }
         }
       ],
-      "linkId": "1.0",
+      "linkId": "EmCare.A.DE03",
       "type": "choice",
-      "text": "Has the client received this year's seasonal flu vaccine?",
-      "required": true,
+      "required": false,
+      "repeats": true,
       "answerOption": [
         {
           "valueCoding": {
-            "code": "Y",
-            "display": "Yes",
-            "system": "custom"
-          }
-        },
-        {
-          "valueCoding": {
-            "code": "N",
-            "display": "No",
-            "system": "custom"
-          }
-        },
-        {
-          "valueCoding": {
-            "code": "unknown",
-            "display": "Unknown",
-            "system": "custom"
+            "code": "EmCare.A.DE03",
+            "display": "Child's Identity unknown/prefer to remain anonymous"
           }
         }
       ],
@@ -68,25 +51,27 @@
               }
             }
           ],
-          "linkId": "1-select-one",
-          "text": "Select one",
+          "linkId": "EmCare.A.DE03-instr",
+          "text": "Additional Info",
           "type": "display"
-        }
-      ]
-    },
-    {
-      "text": "Date of Vaccination?",
-      "type": "date",
-      "required": true,
-      "linkId": "1.1",
-      "enableWhen": [
+        },
         {
-          "question": "1.0",
-          "operator": "=",
-          "answerCoding": {
-            "system": "custom",
-            "code": "Y"
-          }
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/questionnaire-item-control",
+                    "code": "help"
+                  }
+                ]
+              }
+            }
+          ],
+          "linkId": "EmCare.A.DE03-info",
+          "text": "Only one answer can be selected. If none apply, skip the question.",
+          "type": "display"
         }
       ]
     }
