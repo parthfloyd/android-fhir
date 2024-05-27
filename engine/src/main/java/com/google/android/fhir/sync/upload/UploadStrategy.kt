@@ -74,11 +74,11 @@ private constructor(
    * resource PUT requests. This strategy sends individual request for each resource to
    * the server.
    */
-  object AllChangesIndividualResourcesPut :
+  object AllChangesIndividualResourcesPost :
     UploadStrategy(
       LocalChangesFetchMode.AllChanges,
       PatchGeneratorMode.PerResource,
-      UploadRequestGeneratorMode.UrlRequest(HttpVerb.PUT, HttpVerb.PATCH),
+      UploadRequestGeneratorMode.UrlRequest(HttpVerb.POST, HttpVerb.PUT),
     )
 
   /*
