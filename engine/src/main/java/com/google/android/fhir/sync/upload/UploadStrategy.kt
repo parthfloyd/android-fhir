@@ -69,6 +69,18 @@ private constructor(
       UploadRequestGeneratorMode.BundleRequest(Bundle.HTTPVerb.PUT, Bundle.HTTPVerb.PATCH),
     )
 
+  /**
+   * Fetches all local changes, generates one patch per resource, and uploads them in individual
+   * resource PUT requests. This strategy sends individual request for each resource to
+   * the server.
+   */
+  object AllChangesIndividualResourcesPut :
+    UploadStrategy(
+      LocalChangesFetchMode.AllChanges,
+      PatchGeneratorMode.PerResource,
+      UploadRequestGeneratorMode.UrlRequest(HttpVerb.PUT, HttpVerb.PATCH),
+    )
+
   /*
    * All the [UploadStrategy]s below this line are still in progress and not available as of now. As
    * and when an [UploadStrategy] is implemented, it should be moved above this comment section and
